@@ -1,0 +1,3 @@
+C:/Users/DELL/OneDrive/Desktop/DS/sfml-app/build/CMakeFiles/AlgorithmVisualizer.dir
+C:/Users/DELL/OneDrive/Desktop/DS/sfml-app/build/CMakeFiles/edit_cache.dir
+C:/Users/DELL/OneDrive/Desktop/DS/sfml-app/build/CMakeFiles/rebuild_cache.dir
