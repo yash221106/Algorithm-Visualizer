@@ -2,6 +2,12 @@
 
 A clean, modular C++ project for visualizing algorithms using SFML 3.x.
 
+/\*
+COMMAND TO BUILD AND RUN THE PROJECT
+
+g++ src/_.cpp -o visualizer -std=c++17 -Iinclude -IC:\SFML-3.0.2\include -LC:\SFML-3.0.2\lib -lsfml-graphics -lsfml-window -lsfml-system
+_/
+
 ## Project Structure
 
 ```
@@ -95,4 +101,3 @@ Or on Windows:
 - Add searching algorithms (Binary Search, Linear Search, etc.)
 - Add graph algorithms visualization
 - Add animation controls (pause, step, speed)
-

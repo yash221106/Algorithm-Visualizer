@@ -5,13 +5,14 @@
 #include "../include/SelectionSort.hpp"
 #include "../include/MergeSort.hpp"
 #include "../include/QuickSort.hpp"
-
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 Visualizer::Visualizer(int width, int height, int numBars)
     : windowWidth(width), windowHeight(height), barCount(numBars),
       window(sf::VideoMode(sf::Vector2u(width, height)), "Algorithm Visualizer"),
-      fontLoaded(false), instructionText(nullptr), titleText(nullptr),
+      fontLoaded(false), instructionText(nullptr), titleText(nullptr), statsText(nullptr),
       isSorting(false), selectedAlgorithm("None"), algorithmIndex(0)
 {
 
@@ -38,8 +39,14 @@ void Visualizer::setupText()
     titleText->setFillColor(sf::Color::White);
     titleText->setPosition(sf::Vector2f(20.0f, 15.0f));
 
+    statsText = std::make_unique<sf::Text>(font);
+    statsText->setString("Comparisons: 0 | Swaps: 0 | Array Accesses: 0 | Time: 0.00s");
+    statsText->setCharacterSize(18);
+    statsText->setFillColor(sf::Color(150, 255, 150));
+    statsText->setPosition(sf::Vector2f(20.0f, 50.0f));
+
     instructionText = std::make_unique<sf::Text>(font);
-    instructionText->setString("Press R to Randomize | Press 1-3 to Select Algorithm | Press SPACE to Start");
+    instructionText->setString("Press R to Randomize | Press 1-5 to Select Algorithm | Press SPACE to Start");
     instructionText->setCharacterSize(18);
     instructionText->setFillColor(sf::Color(200, 200, 200));
 
@@ -57,6 +64,19 @@ void Visualizer::updateTitleText()
     }
 }
 
+void Visualizer::updateStatsText()
+{
+    if (statsText)
+    {
+        std::ostringstream oss;
+        oss << "Comparisons: " << stats.getComparisons()
+            << " | Swaps: " << stats.getSwaps()
+            << " | Array Accesses: " << stats.getArrayAccesses()
+            << " | Time: " << std::fixed << std::setprecision(2) << stats.getElapsedTime() << "s";
+        statsText->setString(oss.str());
+    }
+}
+
 void Visualizer::randomizeBars()
 {
     if (isSorting)
@@ -65,6 +85,8 @@ void Visualizer::randomizeBars()
     std::vector<int> heights = Utils::generateRandomArray(barCount, 50, windowHeight - 120);
     createBars(heights);
     resetBarColors();
+    stats.reset();
+    updateStatsText();
 }
 
 void Visualizer::createBars(const std::vector<int> &heights)
@@ -85,6 +107,7 @@ void Visualizer::startSorting()
         return;
 
     isSorting = true;
+    stats.start();
     updateTitleText();
 
     if (algorithmIndex == 1)
@@ -108,6 +131,8 @@ void Visualizer::startSorting()
         QuickSort::sort(*this);
     }
 
+    stats.stop();
+
     for (size_t i = 0; i < bars.size(); ++i)
     {
         bars[i].setColor(sf::Color(50, 200, 50));
@@ -116,6 +141,7 @@ void Visualizer::startSorting()
 
     isSorting = false;
     updateTitleText();
+    updateStatsText();
 }
 
 void Visualizer::handleEvents()
@@ -176,6 +202,10 @@ void Visualizer::handleEvents()
 
 void Visualizer::update()
 {
+    if (isSorting)
+    {
+        updateStatsText();
+    }
 }
 
 void Visualizer::render()
@@ -191,6 +221,8 @@ void Visualizer::render()
     {
         if (titleText)
             window.draw(*titleText);
+        if (statsText)
+            window.draw(*statsText);
         if (instructionText)
             window.draw(*instructionText);
     }
@@ -212,6 +244,11 @@ void Visualizer::renderFrame()
     {
         if (titleText)
             window.draw(*titleText);
+        if (statsText)
+        {
+            updateStatsText(); // Update stats text every frame during sorting
+            window.draw(*statsText);
+        }
         if (instructionText)
             window.draw(*instructionText);
     }
@@ -250,6 +287,11 @@ void Visualizer::markAsSorted(int index)
 std::vector<Bar> &Visualizer::getBars()
 {
     return bars;
+}
+
+Statistics &Visualizer::getStats()
+{
+    return stats;
 }
 
 int Visualizer::getWindowHeight() const

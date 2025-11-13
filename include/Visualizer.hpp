@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include "Bar.hpp"
+#include "Statistics.hpp"
 
 class Visualizer
 {
@@ -15,6 +16,7 @@ private:
     sf::Font font;
     std::unique_ptr<sf::Text> titleText;
     std::unique_ptr<sf::Text> instructionText;
+    std::unique_ptr<sf::Text> statsText;
 
     const int windowWidth;
     const int windowHeight;
@@ -25,6 +27,8 @@ private:
     std::string selectedAlgorithm;
     int algorithmIndex;
 
+    Statistics stats;
+
     void handleEvents();
     void update();
     void render();
@@ -32,6 +36,7 @@ private:
     void randomizeBars();
     void setupText();
     void updateTitleText();
+    void updateStatsText();
     void startSorting();
 
 public:
@@ -44,6 +49,7 @@ public:
     void markAsSorted(int index);
 
     std::vector<Bar> &getBars();
+    Statistics &getStats();
     int getWindowHeight() const;
     bool getIsSorting() const;
     void setIsSorting(bool sorting);

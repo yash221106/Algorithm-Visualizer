@@ -7,6 +7,7 @@ namespace SelectionSort
     void sort(Visualizer &viz)
     {
         auto &bars = viz.getBars();
+        auto &stats = viz.getStats();
         int n = bars.size();
 
         for (int i = 0; i < n - 1; ++i)
@@ -18,6 +19,11 @@ namespace SelectionSort
 
             for (int j = i + 1; j < n; ++j)
             {
+                stats.incrementComparisons();
+                stats.incrementArrayAccesses();
+                stats.incrementArrayAccesses();
+                viz.renderFrame();
+
                 viz.highlightBars(minIndex, j, sf::Color(255, 255, 100));
                 viz.renderFrame();
                 sf::sleep(sf::milliseconds(10));
@@ -42,6 +48,11 @@ namespace SelectionSort
 
             if (minIndex != i)
             {
+                stats.incrementSwaps();
+                stats.incrementArrayAccesses();
+                stats.incrementArrayAccesses();
+                viz.renderFrame();
+
                 viz.highlightBars(i, minIndex, sf::Color(255, 100, 100));
 
                 float tempHeight = bars[i].getHeight();

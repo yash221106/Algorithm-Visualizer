@@ -1,55 +1,105 @@
 #include "../include/QuickSort.hpp"
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 
 namespace QuickSort
 {
-    int partition(Visualizer &viz, int low, int high);
-    void sortRecursive(Visualizer &viz, int low, int high);
 
-    void sort(Visualizer &viz) // <-- new wrapper
+    int partition(std::vector<Bar> &bars, int low, int high, Visualizer &viz)
     {
-        auto &bars = viz.getBars();
-        if (bars.empty())
-            return;
-        sortRecursive(viz, 0, bars.size() - 1);
-    }
+        auto &stats = viz.getStats();
 
-    void sortRecursive(Visualizer &viz, int low, int high)
-    {
-        if (low < high)
-        {
-            int pi = partition(viz, low, high);
-            sortRecursive(viz, low, pi - 1);
-            sortRecursive(viz, pi + 1, high);
-        }
-    }
-
-    int partition(Visualizer &viz, int low, int high)
-    {
-        auto &bars = viz.getBars();
+        stats.incrementArrayAccesses();
+        viz.renderFrame();
         float pivot = bars[high].getHeight();
+
+        viz.highlightBars(high, -1, sf::Color(255, 0, 255));
+        viz.renderFrame();
+        sf::sleep(sf::milliseconds(50));
+
         int i = low - 1;
 
         for (int j = low; j < high; ++j)
         {
+            stats.incrementComparisons();
+            stats.incrementArrayAccesses();
+            viz.renderFrame();
+
             viz.highlightBars(j, high, sf::Color(255, 255, 100));
             viz.renderFrame();
-            sf::sleep(sf::milliseconds(30));
+            sf::sleep(sf::milliseconds(20));
 
             if (bars[j].getHeight() < pivot)
             {
                 i++;
-                std::swap(bars[i], bars[j]);
+                stats.incrementSwaps();
+                stats.incrementArrayAccesses();
+                stats.incrementArrayAccesses();
+                viz.renderFrame();
+
+                viz.highlightBars(i, j, sf::Color(255, 100, 100));
+
+                float tempHeight = bars[i].getHeight();
+                bars[i].setHeight(bars[j].getHeight());
+                bars[j].setHeight(tempHeight);
+
                 viz.renderFrame();
                 sf::sleep(sf::milliseconds(30));
             }
+
+            viz.resetBarColors();
+            viz.highlightBars(high, -1, sf::Color(255, 0, 255));
         }
 
-        std::swap(bars[i + 1], bars[high]);
+        stats.incrementSwaps();
+        stats.incrementArrayAccesses();
+        stats.incrementArrayAccesses();
         viz.renderFrame();
-        sf::sleep(sf::milliseconds(30));
+
+        viz.highlightBars(i + 1, high, sf::Color(255, 100, 100));
+
+        float tempHeight = bars[i + 1].getHeight();
+        bars[i + 1].setHeight(bars[high].getHeight());
+        bars[high].setHeight(tempHeight);
+
+        viz.renderFrame();
+        sf::sleep(sf::milliseconds(50));
 
         viz.resetBarColors();
+        viz.markAsSorted(i + 1);
+        viz.renderFrame();
+
         return i + 1;
+    }
+
+    void quickSort(std::vector<Bar> &bars, int low, int high, Visualizer &viz)
+    {
+        if (low < high)
+        {
+            int pi = partition(bars, low, high, viz);
+
+            quickSort(bars, low, pi - 1, viz);
+            quickSort(bars, pi + 1, high, viz);
+        }
+        else if (low == high)
+        {
+            viz.markAsSorted(low);
+            viz.renderFrame();
+        }
+    }
+
+    void sort(Visualizer &viz)
+    {
+        auto &bars = viz.getBars();
+        int n = bars.size();
+
+        quickSort(bars, 0, n - 1, viz);
+
+        viz.resetBarColors();
+        for (int i = 0; i < n; ++i)
+        {
+            viz.markAsSorted(i);
+        }
+        viz.renderFrame();
     }
 }
