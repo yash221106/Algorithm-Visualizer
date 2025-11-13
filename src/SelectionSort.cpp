@@ -8,13 +8,15 @@ namespace SelectionSort
     {
         auto &bars = viz.getBars();
         auto &stats = viz.getStats();
+        auto colors = viz.getThemeColors();
+        int delay = viz.getCurrentDelay();
         int n = bars.size();
 
         for (int i = 0; i < n - 1; ++i)
         {
             int minIndex = i;
 
-            viz.highlightBars(i, -1, sf::Color(100, 100, 255));
+            viz.highlightBars(i, -1, colors.comparingBar);
             viz.renderFrame();
 
             for (int j = i + 1; j < n; ++j)
@@ -24,9 +26,9 @@ namespace SelectionSort
                 stats.incrementArrayAccesses();
                 viz.renderFrame();
 
-                viz.highlightBars(minIndex, j, sf::Color(255, 255, 100));
+                viz.highlightBars(minIndex, j, colors.comparingBar);
                 viz.renderFrame();
-                sf::sleep(sf::milliseconds(10));
+                sf::sleep(sf::milliseconds(delay));
 
                 if (bars[j].getHeight() < bars[minIndex].getHeight())
                 {
@@ -43,7 +45,7 @@ namespace SelectionSort
                 {
                     viz.markAsSorted(k);
                 }
-                viz.highlightBars(minIndex, -1, sf::Color(100, 100, 255));
+                viz.highlightBars(minIndex, -1, colors.comparingBar);
             }
 
             if (minIndex != i)
@@ -53,14 +55,14 @@ namespace SelectionSort
                 stats.incrementArrayAccesses();
                 viz.renderFrame();
 
-                viz.highlightBars(i, minIndex, sf::Color(255, 100, 100));
+                viz.highlightBars(i, minIndex, colors.swappingBar);
 
                 float tempHeight = bars[i].getHeight();
                 bars[i].setHeight(bars[minIndex].getHeight());
                 bars[minIndex].setHeight(tempHeight);
 
                 viz.renderFrame();
-                sf::sleep(sf::milliseconds(50));
+                sf::sleep(sf::milliseconds(delay));
             }
 
             viz.resetBarColors();

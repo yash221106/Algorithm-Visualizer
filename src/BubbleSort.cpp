@@ -8,6 +8,8 @@ namespace BubbleSort
     {
         auto &bars = viz.getBars();
         auto &stats = viz.getStats();
+        auto colors = viz.getThemeColors();
+        int delay = viz.getCurrentDelay();
         int n = bars.size();
 
         for (int i = 0; i < n - 1; ++i)
@@ -18,9 +20,9 @@ namespace BubbleSort
                 stats.incrementArrayAccesses();
                 stats.incrementArrayAccesses();
 
-                viz.highlightBars(j, j + 1, sf::Color(255, 255, 100));
+                viz.highlightBars(j, j + 1, colors.comparingBar);
                 viz.renderFrame();
-                sf::sleep(sf::milliseconds(10));
+                sf::sleep(sf::milliseconds(delay));
 
                 if (bars[j].getHeight() > bars[j + 1].getHeight())
                 {
@@ -32,9 +34,9 @@ namespace BubbleSort
                     bars[j].setHeight(bars[j + 1].getHeight());
                     bars[j + 1].setHeight(tempHeight);
 
-                    viz.highlightBars(j, j + 1, sf::Color(255, 100, 100));
+                    viz.highlightBars(j, j + 1, colors.swappingBar);
                     viz.renderFrame();
-                    sf::sleep(sf::milliseconds(10));
+                    sf::sleep(sf::milliseconds(delay));
                 }
 
                 viz.resetBarColors();

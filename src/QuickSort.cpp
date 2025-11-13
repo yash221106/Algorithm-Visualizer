@@ -8,12 +8,15 @@ namespace QuickSort
     int partition(std::vector<Bar> &bars, int low, int high, Visualizer &viz)
     {
         auto &stats = viz.getStats();
+        auto colors = viz.getThemeColors();
+        int delay = viz.getCurrentDelay();
 
         stats.incrementArrayAccesses();
         viz.renderFrame();
         float pivot = bars[high].getHeight();
 
-        viz.highlightBars(high, -1, sf::Color(255, 0, 255));
+        // Highlight the pivot bar
+        viz.highlightBars(high, -1, colors.pivotBar);
         viz.renderFrame();
         sf::sleep(sf::milliseconds(50));
 
@@ -25,7 +28,8 @@ namespace QuickSort
             stats.incrementArrayAccesses();
             viz.renderFrame();
 
-            viz.highlightBars(j, high, sf::Color(255, 255, 100));
+            // Highlight bars being compared
+            viz.highlightBars(j, high, colors.comparingBar);
             viz.renderFrame();
             sf::sleep(sf::milliseconds(20));
 
@@ -37,18 +41,19 @@ namespace QuickSort
                 stats.incrementArrayAccesses();
                 viz.renderFrame();
 
-                viz.highlightBars(i, j, sf::Color(255, 100, 100));
+                // Swap bars and highlight them
+                viz.highlightBars(i, j, colors.swappingBar);
 
                 float tempHeight = bars[i].getHeight();
                 bars[i].setHeight(bars[j].getHeight());
                 bars[j].setHeight(tempHeight);
 
                 viz.renderFrame();
-                sf::sleep(sf::milliseconds(30));
+                sf::sleep(sf::milliseconds(delay));
             }
 
             viz.resetBarColors();
-            viz.highlightBars(high, -1, sf::Color(255, 0, 255));
+            viz.highlightBars(high, -1, colors.pivotBar);
         }
 
         stats.incrementSwaps();
@@ -56,7 +61,8 @@ namespace QuickSort
         stats.incrementArrayAccesses();
         viz.renderFrame();
 
-        viz.highlightBars(i + 1, high, sf::Color(255, 100, 100));
+        // Swap pivot into correct position
+        viz.highlightBars(i + 1, high, colors.swappingBar);
 
         float tempHeight = bars[i + 1].getHeight();
         bars[i + 1].setHeight(bars[high].getHeight());
@@ -78,6 +84,7 @@ namespace QuickSort
         {
             int pi = partition(bars, low, high, viz);
 
+            // Recursively sort the partitions
             quickSort(bars, low, pi - 1, viz);
             quickSort(bars, pi + 1, high, viz);
         }
@@ -91,10 +98,14 @@ namespace QuickSort
     void sort(Visualizer &viz)
     {
         auto &bars = viz.getBars();
+        auto &stats = viz.getStats();
+        auto colors = viz.getThemeColors();
+        int delay = viz.getCurrentDelay();
         int n = bars.size();
 
         quickSort(bars, 0, n - 1, viz);
 
+        // After sorting, mark all bars as sorted
         viz.resetBarColors();
         for (int i = 0; i < n; ++i)
         {

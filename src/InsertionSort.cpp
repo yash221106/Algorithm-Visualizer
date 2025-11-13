@@ -8,6 +8,8 @@ namespace InsertionSort
     {
         auto &bars = viz.getBars();
         auto &stats = viz.getStats();
+        auto colors = viz.getThemeColors();
+        int delay = viz.getCurrentDelay();
         int n = bars.size();
 
         viz.markAsSorted(0);
@@ -18,9 +20,9 @@ namespace InsertionSort
             float keyHeight = bars[i].getHeight();
             int j = i - 1;
 
-            viz.highlightBars(i, -1, sf::Color(255, 255, 100));
+            viz.highlightBars(i, -1, colors.comparingBar);
             viz.renderFrame();
-            sf::sleep(sf::milliseconds(10));
+            sf::sleep(sf::milliseconds(delay));
 
             while (j >= 0 && bars[j].getHeight() > keyHeight)
             {
@@ -29,11 +31,11 @@ namespace InsertionSort
                 stats.incrementArrayAccesses();
                 viz.renderFrame();
 
-                viz.highlightBars(j, j + 1, sf::Color(255, 100, 100));
+                viz.highlightBars(j, j + 1, colors.swappingBar);
 
                 bars[j + 1].setHeight(bars[j].getHeight());
                 viz.renderFrame();
-                sf::sleep(sf::milliseconds(10));
+                sf::sleep(sf::milliseconds(delay));
 
                 j--;
             }

@@ -7,6 +7,7 @@
 #include <string>
 #include "Bar.hpp"
 #include "Statistics.hpp"
+#include "Config.hpp"
 
 class Visualizer
 {
@@ -17,6 +18,7 @@ private:
     std::unique_ptr<sf::Text> titleText;
     std::unique_ptr<sf::Text> instructionText;
     std::unique_ptr<sf::Text> statsText;
+    std::unique_ptr<sf::Text> controlsText;
 
     const int windowWidth;
     const int windowHeight;
@@ -24,8 +26,13 @@ private:
 
     bool fontLoaded;
     bool isSorting;
+    bool isPaused;
     std::string selectedAlgorithm;
     int algorithmIndex;
+
+    SortSpeed currentSpeed;
+    ColorTheme currentTheme;
+    ThemeColors themeColors;
 
     Statistics stats;
 
@@ -37,7 +44,11 @@ private:
     void setupText();
     void updateTitleText();
     void updateStatsText();
+    void updateControlsText();
     void startSorting();
+    void changeSpeed(SortSpeed newSpeed);
+    void changeTheme(ColorTheme newTheme);
+    void applyThemeToAllBars();
 
 public:
     Visualizer(int width, int height, int numBars);
@@ -51,8 +62,13 @@ public:
     std::vector<Bar> &getBars();
     Statistics &getStats();
     int getWindowHeight() const;
+    int getCurrentDelay() const;
     bool getIsSorting() const;
+    bool getIsPaused() const;
     void setIsSorting(bool sorting);
+    void setIsPaused(bool paused);
+
+    ThemeColors getThemeColors() const;
 };
 
 #endif

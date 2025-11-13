@@ -9,6 +9,8 @@ namespace MergeSort
     void merge(std::vector<Bar> &bars, int left, int mid, int right, Visualizer &viz)
     {
         auto &stats = viz.getStats();
+        auto colors = viz.getThemeColors();
+        int delay = viz.getCurrentDelay();
         int n1 = mid - left + 1;
         int n2 = right - mid;
 
@@ -20,7 +22,7 @@ namespace MergeSort
             stats.incrementArrayAccesses();
             viz.renderFrame();
             leftHeights.push_back(bars[left + i].getHeight());
-            viz.highlightBars(left + i, -1, sf::Color(100, 100, 255));
+            viz.highlightBars(left + i, -1, colors.comparingBar);
         }
 
         for (int i = 0; i < n2; ++i)
@@ -28,7 +30,7 @@ namespace MergeSort
             stats.incrementArrayAccesses();
             viz.renderFrame();
             rightHeights.push_back(bars[mid + 1 + i].getHeight());
-            viz.highlightBars(mid + 1 + i, -1, sf::Color(150, 100, 255));
+            viz.highlightBars(mid + 1 + i, -1, colors.comparingBar);
         }
 
         viz.renderFrame();
@@ -42,16 +44,16 @@ namespace MergeSort
             stats.incrementArrayAccesses();
             viz.renderFrame();
 
-            viz.highlightBars(k, -1, sf::Color(255, 255, 100));
+            viz.highlightBars(k, -1, colors.comparingBar);
             viz.renderFrame();
-            sf::sleep(sf::milliseconds(30));
+            sf::sleep(sf::milliseconds(delay));
 
             if (leftHeights[i] <= rightHeights[j])
             {
                 stats.incrementArrayAccesses();
                 viz.renderFrame();
                 bars[k].setHeight(leftHeights[i]);
-                viz.highlightBars(k, -1, sf::Color(100, 255, 100));
+                viz.highlightBars(k, -1, colors.swappingBar);
                 i++;
             }
             else
@@ -59,12 +61,12 @@ namespace MergeSort
                 stats.incrementArrayAccesses();
                 viz.renderFrame();
                 bars[k].setHeight(rightHeights[j]);
-                viz.highlightBars(k, -1, sf::Color(100, 255, 100));
+                viz.highlightBars(k, -1, colors.swappingBar);
                 j++;
             }
 
             viz.renderFrame();
-            sf::sleep(sf::milliseconds(30));
+            sf::sleep(sf::milliseconds(delay));
             k++;
         }
 
@@ -73,9 +75,9 @@ namespace MergeSort
             stats.incrementArrayAccesses();
             viz.renderFrame();
             bars[k].setHeight(leftHeights[i]);
-            viz.highlightBars(k, -1, sf::Color(100, 255, 100));
+            viz.highlightBars(k, -1, colors.swappingBar);
             viz.renderFrame();
-            sf::sleep(sf::milliseconds(30));
+            sf::sleep(sf::milliseconds(delay));
             i++;
             k++;
         }
@@ -85,9 +87,9 @@ namespace MergeSort
             stats.incrementArrayAccesses();
             viz.renderFrame();
             bars[k].setHeight(rightHeights[j]);
-            viz.highlightBars(k, -1, sf::Color(100, 255, 100));
+            viz.highlightBars(k, -1, colors.swappingBar);
             viz.renderFrame();
-            sf::sleep(sf::milliseconds(30));
+            sf::sleep(sf::milliseconds(delay));
             j++;
             k++;
         }
